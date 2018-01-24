@@ -1,0 +1,22 @@
+{
+	"port": 8080,		//main.py监听的端口
+	"apps_root": "./testapp",
+	"apps": [
+		//默认会自动识别apps_root目录下的所有文件夹为app
+		{
+			"name": "app1",		//默认app1
+			"dir": "./testapp/app1",
+			"remote_dir": "/www/app1" //默认为 remote_root/name，app在远程服务器的目录选择原则，remote_dir>servers中配置的remote_root>顶层配置的remote_root
+		}
+	],
+	"remote_root": "/www",
+	"servers": [
+		//配置需要部署的远程服务器
+		{
+			"host": "127.0.0.1",
+			"user": "user",
+			"password": "pwd",
+			"remote_root": "/www_test"		//覆盖上层设置的remote_root，不设置则默认为上层设置的remote_root，即默认为/www，不同服务器可设置不同的remote_root
+		}
+	]
+}
