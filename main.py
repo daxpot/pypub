@@ -1,22 +1,24 @@
 #coding=utf-8
+session = None
 import web
-from web.wsgiserver import CherryPyWSGIServer
-from tools import common
-
-CherryPyWSGIServer.ssl_certificate = "certs/test.pem"
-CherryPyWSGIServer.ssl_private_key = "certs/test.key"
-
-class index(object):
-	"""docstring for index"""
-	def __init__(self):
-		pass
-
-	def GET(self):
-		return "Hello Index";
+from pypub.common import COMMON
+from pypub.index import Index
+from pypub.login import Login
 
 def main():
-	urls = ("/.*", "index")
+	global session
+	config = COMMON.load_config()
+	if not config:
+		print("配置文件加载失败！")
+		return
+	COMMON.load_ssl(config)
+	urls = (
+		"/", "Index",
+		"/login", "Login"
+		)
+	web.config.debug = False
 	app = web.application(urls, globals())
+	session = COMMON.get_session(app)
 	app.run()
 
 if __name__ == '__main__':

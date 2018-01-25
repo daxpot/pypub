@@ -2,3 +2,4 @@
 certs
 log
 *.pyc
+sessions
