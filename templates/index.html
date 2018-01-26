@@ -1,10 +1,47 @@
-$def with (username)
+$def with (username, infos, errmsg)
 $var title:首页
 $var username: $username
+
 <div class="container jumbotron">
 	<h1></h1>
+	<p style='color:red'>$errmsg</p>
 	<div class="panel panel-default">
 		<div class="panel-body">
+			<form action="/" class="form-horizontal" method="post">
+				<div class="form-group">
+				    <label class="col-sm-1 control-label">appid</label>
+				    <div  class="col-sm-2">
+				    	<input type="text" class="form-control" name="appid" oninput="versionInput()">
+				    </div>
+				    <label  class="col-sm-1 control-label">版本号</label>
+				    <div  class="col-sm-2">
+				    	<input type="text" class="form-control" name="version" placeholder="例:0.1.1">
+				    	<div id="current-cur" style="color:red"></div>
+				    </div>
+				    <label  class="col-sm-1 control-label">备注</label>
+				    <div  class="col-sm-4">
+				    	<input type="text" class="form-control" maxlength="20" name="comment" placeholder="限长20">
+				    </div>
+				    <div class="col-sm-1">
+				    	<button type="submit" class="btn btn-default btn-success">发 布</button>
+				    </div>
+				</div>
+			</form>
+			<hr>
+			<table class='table table-striped'><tr><td>序号<td>appid<td>当前版本号<td>上线时间<td>版本备注<td>操作
+				$for item in infos:
+					<tr><td>$loop.index<td>$item['appid']<td id='version-$item['appid']'>$item['version']<td>$item['uptime']<td>$item['comment']<td><a href='/detail?appid=$item['appid']'><button>详情</button></a>
+			</table>
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	function versionInput() {
+		var appid = event.currentTarget.value;
+		var obj = document.getElementById("version-" + appid);
+		if(obj) {
+			var version = obj.innerText;
+			document.getElementById("current-cur").innerText = version;
+		}
+	}
+</script>

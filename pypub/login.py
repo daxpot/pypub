@@ -1,14 +1,14 @@
 #coding=utf-8
 import web
-from common import COMMON
+from tools import COMMON, WEB_T, CONFIG_T
 
 class Login(object):
     """docstring for Login"""
     def __init__(self):
-        self.session = COMMON.get_session()
+        self.session = WEB_T.get_session()
 
     def GET(self):
-        render = COMMON.get_render()
+        render = WEB_T.get_render()
         self.session.logged_in = False
         return render.login("")
 
@@ -17,11 +17,11 @@ class Login(object):
         username = i.get('username')
         password = i.get('password')
         password = COMMON.get_md5(password)
-        config = COMMON.load_config()
+        config = CONFIG_T.load_config()
         if username in config["users"] and password == config["users"][username]["password"]:
             self.session.logged_in = True
             self.session.username = username
             raise web.seeother('/')
         else:
-            render = COMMON.get_render()
+            render = WEB_T.get_render()
             return render.login("用户名或密码错误！")
