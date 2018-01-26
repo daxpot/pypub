@@ -1,7 +1,7 @@
 #coding=utf-8
 import web
 import json
-from tools import WEB_T, CONFIG_T, COMMON, PutT
+from tools import WEB_T, CONFIG_T, COMMON
 
 class Detail(object):
     """docstring for Detail"""

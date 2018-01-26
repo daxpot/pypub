@@ -3,6 +3,8 @@ import os
 from tools import WEB_T, CONFIG_T, COMMON
 import json
 import glob
+import shutil
+import errno
 
 class PubCore(object):
     """docstring for PubCore"""
@@ -63,12 +65,49 @@ class PubCore(object):
         md5 = COMMON.dbget("meta-%s-%s" % (self.appid, version), {}, "json")
         return md5
 
-    def compute_update(self, last_md5, current_md5):
-        pass
+    def copy_file(self, src, dist):
+        dist_dir = os.path.dirname(dist)
+        self.mkdirs(dist_dir)
+        shutil.copy(src,  dist_dir)
+
+    def mkdirs(self, path):
+        try:
+            os.makedirs(path)
+        except OSError as exc: 
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else: raise
+
+    def compute_update(self, last_md5, current_md5, version):
+        update = {"new": [], "modify": [], "del": []}
+        objs_path = "./data/objs/%s/%s" % (self.appid, version)
+        self.mkdirs(objs_path)
+        meta = {}
+        for file in current_md5:
+            if file not in last_md5:
+                update["new"].append(file)
+                meta[file] = {
+                    "md5": current_md5[file],
+                    "ver": version
+                }
+                self.copy_file("%s/%s" % (self.dir, file), "%s/%s" % (objs_path, file))
+            elif last_md5[file]["md5"] != current_md5[file]:
+                update["modify"].append(file)
+                meta[file] = {
+                    "md5": current_md5[file],
+                    "ver": version
+                }
+                self.copy_file("%s/%s" % (self.dir, file), "%s/%s" % (objs_path, file))
+            else:
+                meta[file] = last_md5[file]
+        for file in last_md5:
+            if file not in current_md5:
+                update["del"].append(file)
+        return update, meta
 
     def publish(self, version):
         last_md5 = self.get_last_md5()
         current_md5 = self.get_current_md5()
-        print last_md5, current_md5
-        update = self.compute_update(last_md5, current_md5)
-        return {"new": ["file1"], "modify": [], "del": []}
+        update, meta = self.compute_update(last_md5, current_md5, version)
+        COMMON.dbput("meta-%s-%s" % (self.appid, version), meta, "json")
+        return update
