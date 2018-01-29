@@ -1,5 +1,5 @@
+config.json
+testapp
 .DS_Store
 *.pyc
 data
-config.json
-testapp

@@ -1,12 +1,19 @@
 $def with (username, infos, errmsg)
 $var title:详情
 $var username: $username
+
 <div class="container jumbotron">
 	<h1></h1>
 	<p style='color:red'>$errmsg</p>
 	<div class="panel panel-default">
 		<div class="panel-body">
 			<table class='table table-striped'><tr><td>序号<td>版本号<td>发布时间<td>备注<td>新增文件<td>修改文件<td>删除文件<td>操作
+				$for ver in infos['history']:
+					<tr><td>$loop.index<td>$ver<td>$infos['vers'][ver]['uptime']<td>$infos['vers'][ver]['comment']
+						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['newhtm']
+						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['modifyhtm']
+						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['delhtm']
+						<td><button class='btn btn-danger' onclick='fallback("$ver")'>回退</button>
 		</div>
 	</div>
 </div>
