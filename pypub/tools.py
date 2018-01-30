@@ -36,7 +36,7 @@ class ConfigT(object):
 	    log_root = 'data/log'
 	    if not os.path.exists(log_root):
 	        os.makedirs(log_root)
-	    cur_time = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+	    cur_time = time.strftime("%Y%m%d", time.localtime())
 
 	    log_file_name = '%s/%s.log' %(log_root, cur_time)
 	    logging.basicConfig(level=logLevel,
@@ -61,6 +61,8 @@ class ConfigT(object):
 				if "dir" in app:
 					if "name" not in app:
 						app["name"] = os.path.basename(app["dir"])
+					if "remote_dir" in app:
+						app["remote_dir"] = app["remote_dir"].rstrip("/")
 					app_paths[os.path.abspath(app["dir"])] = 1
 				else:
 					apps.remove(app)
@@ -78,6 +80,26 @@ class ConfigT(object):
 					})
 					app_paths[abspath] = 1
 		return apps
+
+	def get_servers(self):
+		config = self.load_config()
+		servers = []
+		remote_root = ""
+		if "remote_root" in config:
+			remote_root = config["remote_root"]
+		if "servers" in config and isinstance(config["servers"], list):
+			for server in config["servers"]:
+				if "host" in server and isinstance(server["host"], unicode) and server["host"] and "user" in server and isinstance(server["user"], unicode) and server["user"] and "password" in server and isinstance(server["password"], unicode) and server["password"]:
+					if "remote_root" not in server:
+						server["remote_root"] = remote_root
+					if not isinstance(server["remote_root"], unicode):
+						server["remote_root"] = ""
+					if "port" not in server or not isinstance(server["port"], int):
+						server["port"] = 22
+					server["remote_root"] = server["remote_root"].rstrip("/")
+					servers.append(server)
+		return servers
+
 
 
 class WebT(object):
