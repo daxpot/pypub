@@ -88,11 +88,13 @@ class Sync(object):
         cur = COMMON.dbget("cur-%s" % app["name"], {"current":""}, "json")
         current = cur["current"]
         meta = COMMON.dbget("meta-%s-%s" % (app["name"], current), {}, "json")
+        bupdate = False
         for file in meta:
             ver = meta[file]["ver"]
             md5 = meta[file]["md5"]
             if file not in s_files or s_files[file] != md5:
                 logging.info("%s %s", u"更新", file)
+                bupdate = True
                 localpath = "data/objs/%s/%s/%s" % (app["name"], ver, file)
                 serverpath = "%s/%s" % (app["remote_dir"], file)
                 serverdir = os.path.dirname(serverpath)
@@ -106,11 +108,24 @@ class Sync(object):
         for file in s_files:
             if file not in meta:
                 logging.info("%s %s", u"删除", file)
+                bupdate = True
                 serverpath = "%s/%s" % (app["remote_dir"], file)
                 try:
                     self.sftp.remove(serverpath)
                 except Exception as e:
                     logging.error(e)
+        hooks_path = "%s/.pypub/hooks.sh" % app["dir"].rstrip("/")
+        if bupdate and os.path.exists(hooks_path):
+            spath = "/%s_%s.sh" % (app["name"], current)
+            self.sftp.put(hooks_path, spath)
+            stdin, stdout, stderr = self.ssh.exec_command("sh %s" % spath)
+            out = stdout.readlines()
+            err = stderr.readlines()
+            for r in err:
+                logging.error(r)
+            for o in out:
+                logging.info(o)
+
         COMMON.dbput("remote-%s-%s" % (app["name"], server["host"]), {
             "ver": current, 
             "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
