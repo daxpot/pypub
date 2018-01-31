@@ -1,3 +1,4 @@
+<pre>
 key 				value
 
 cur-$appid  		json example
@@ -42,3 +43,4 @@ remote-$appid-$host json example
 						"ver": "0.0.1",
 						"time": "2018-01-30 12:27:22"
 					}
+</pre>
