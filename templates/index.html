@@ -30,7 +30,7 @@ $var username: $username
 			<hr>
 			<table class='table table-striped'><tr><td>序号<td>appid<td>当前版本号<td>上线时间<td>版本备注<td>操作
 				$for item in infos:
-					<tr><td>$loop.index<td>$item['appid']<td id='version-$item['appid']'>$item['version']<td>$item['uptime']<td>$item['comment']<td><a href='/detail?appid=$item['appid']'><button>详情</button></a>
+					<tr><td>$loop.index<td>$item['appid']<td id='version-$item['appid']'>$item['version']<td>$item['uptime']<td>$item['comment']<td><a href='/detail?appid=$item['appid']'><button class='btn btn-default'>详情</button></a>
 			</table>
 		</div>
 	</div>
