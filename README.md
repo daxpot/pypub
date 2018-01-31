@@ -1,13 +1,13 @@
 # pypub
 python 发布项目到多个服务器
 特点:
-	1. 将文件夹视为项目名称，管理项目代码即管理该文件夹代码
-	2. 支持同步项目到多个服务器
-	3. 支持项目版本管理，包括发布、回退
-	4. 支持查看版本文件详情，对比不同版本文件
-	5. 支持查看各服务器同步项目情况
-	6. 支持服务器同步完项目版本后执行钩子程序(.pypub/hooks.sh, 详情查看testapp/app1/.pypub/hooks.sh)
-	7. 支持忽略发布指定文件(.pypub/pubignore, 详情查看testapp/app1/.pypub/pubignore)
+1. 将文件夹视为项目名称，管理项目代码即管理该文件夹代码
+2. 支持同步项目到多个服务器
+3. 支持项目版本管理，包括发布、回退
+4. 支持查看版本文件详情，对比不同版本文件
+5. 支持查看各服务器同步项目情况
+6. 支持服务器同步完项目版本后执行钩子程序(.pypub/hooks.sh, 详情查看testapp/app1/.pypub/hooks.sh)
+7. 支持忽略发布指定文件(.pypub/pubignore, 详情查看testapp/app1/.pypub/pubignore)
 
 使用方法:
 配置config.json
