@@ -1,5 +1,8 @@
 config.json
-testapp
 .DS_Store
 *.pyc
-data
+data/certs
+data/leveldb
+data/log
+data/objs
+data/sessions
