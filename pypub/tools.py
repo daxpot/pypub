@@ -43,7 +43,7 @@ class ConfigT(object):
 	                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
 	                datefmt='%a, %d %b %Y %H:%M:%S',
 	                filename=log_file_name,
-	                filemode='w')
+	                filemode='a+')
 
 	    console = logging.StreamHandler()
 	    console.setLevel(logging.DEBUG)
@@ -51,7 +51,7 @@ class ConfigT(object):
 	    console.setFormatter(formatter)
 	    logging.getLogger('').addHandler(console)
 
-	def get_apps(self):
+	def get_apps(self, appid=None):
 		config = self.load_config()
 		apps = []
 		app_paths = {}
@@ -63,6 +63,7 @@ class ConfigT(object):
 						app["name"] = os.path.basename(app["dir"])
 					if "remote_dir" in app:
 						app["remote_dir"] = app["remote_dir"].rstrip("/")
+					app["dir"] = app["dir"].rstrip("/")
 					app_paths[os.path.abspath(app["dir"])] = 1
 				else:
 					apps.remove(app)
@@ -79,9 +80,15 @@ class ConfigT(object):
 						"dir": path
 					})
 					app_paths[abspath] = 1
+		if appid:
+			app = None
+			for item in apps:
+				if item["name"] == appid:
+					return item
+			return None
 		return apps
 
-	def get_servers(self):
+	def get_servers(self, host=None):
 		config = self.load_config()
 		servers = []
 		remote_root = ""
@@ -98,6 +105,12 @@ class ConfigT(object):
 						server["port"] = 22
 					server["remote_root"] = server["remote_root"].rstrip("/")
 					servers.append(server)
+		if host:
+			server = None
+			for item in servers:
+				if item["host"] == host:
+					return item
+			return None
 		return servers
 
 

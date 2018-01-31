@@ -5,6 +5,12 @@ from tools import WEB_T, CONFIG_T, COMMON
 from pubcore import PubCore
 import re
 import datetime
+from synccore import SyncCore
+import threading
+
+def sync_app(appid):
+    s = SyncCore()
+    s.run(appid)
 
 class Index(object):
     """docstring for Index"""
@@ -26,7 +32,10 @@ class Index(object):
             appid = app["name"]
             info = self.db_read_json("cur-%s" % appid, {"current": ""})
             ver_info = self.db_read_json("ver-%s-%s" % (appid, info["current"]), {"uptime": "", "comment": ""})
-            info["uptime"] = ver_info["uptime"]
+            if "uptime" in info:
+                info["uptime"] = info["uptime"]
+            else:
+                info["uptime"] = ver_info["uptime"]
             info["comment"] = ver_info["comment"]
             info["appid"] = appid
             info["version"] = info["current"]
@@ -48,12 +57,7 @@ class Index(object):
         appid = i.get('appid')
         version = i.get('version')
         comment = i.get('comment')
-        apps = CONFIG_T.get_apps()
-        app = None
-        for item in apps:
-            if item["name"] == appid:
-                app = item
-                break
+        app = CONFIG_T.get_apps(appid)
         if app == None:
             return "", "", "", "", "appid错误"
         if re.match(r"^([0-9]+\.[0-9]+\.[0-9]+)$", version) == None:
@@ -63,7 +67,6 @@ class Index(object):
         if COMMON.dbget(key):
             return "", "", "", "","该版本号已经存在"
         return appid, version, comment, app, None
-
 
     def deal_post(self):
         appid, version, comment, app, errmsg = self.check_post_param()
@@ -90,10 +93,30 @@ class Index(object):
         appver["current"] = version
         appver["history"].append(version)
         db.Put("cur-%s" % appid, json.dumps(appver))
+        t = threading.Thread(target=sync_app, args=(appid, ))
+        t.start()
         return "发布成功"
+
+    def deal_fallback(self):
+        i = web.input()
+        appid = i.get("appid")
+        version = i.get("version")
+        app = CONFIG_T.get_apps(appid)
+        if not app:
+            return {"errcode": 1, "errmsg": "app不存在"}
+        pc = PubCore(app)
+        data = pc.fallback(version)
+        t = threading.Thread(target=sync_app, args=(appid, ))
+        t.start()
+        return data
 
     def POST(self):
         WEB_T.check_login()
-        errmsg = self.deal_post()
-        return self.render(errmsg)
+        i = web.input()
+        if i.get("action") == "fallback":
+            data = self.deal_fallback()
+            return data
+        else:
+            errmsg = self.deal_post()
+            return self.render(errmsg)
         

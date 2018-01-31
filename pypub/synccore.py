@@ -9,8 +9,8 @@ import logging
 
 from tools import WEB_T, CONFIG_T, COMMON
 
-class Sync(object):
-    """docstring for Sync"""
+class SyncCore(object):
+    """docstring for SyncCore"""
     def __init__(self):
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -122,9 +122,13 @@ class Sync(object):
             out = stdout.readlines()
             err = stderr.readlines()
             for r in err:
-                logging.error(r)
+                logging.error(r.strip())
             for o in out:
-                logging.info(o)
+                logging.info(o.strip())
+            try:
+                self.sftp.remove(spath)
+            except Exception as e:
+                logging.error(e)
 
         COMMON.dbput("remote-%s-%s" % (app["name"], server["host"]), {
             "ver": current, 
@@ -132,17 +136,23 @@ class Sync(object):
             }, "json")
         logging.info("%s %s", app["name"], current)
 
-    def run(self):
-        apps = CONFIG_T.get_apps()
-        servers = CONFIG_T.get_servers()
+    def run(self, appid=None, host=None):
+        apps = CONFIG_T.get_apps(appid)
+        servers = CONFIG_T.get_servers(host)
+        if host:
+            servers = [servers]
+            
         for server in servers:
             if self.link_server(server):
-                for app in apps:
-                    self.sync(app, server)
+                if appid:
+                    self.sync(apps, server)
+                else:
+                    for app in apps:
+                        self.sync(app, server)
                 self.ssh.close()
 
 
 if __name__ == '__main__':
     CONFIG_T.init_logger()
-    s = Sync()
-    s.run()
+    s = SyncCore()
+    s.run("app1")

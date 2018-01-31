@@ -1,0 +1,82 @@
+$def with (username, errmsg, table)
+$var title:文件对比
+$var username: $username
+
+<style type="text/css">
+	table {
+		width: 100%;
+	}
+	th {
+		text-align: center;
+	}
+    table.diff {
+    	font-family:Courier; border:medium;
+    }
+    .diff_header {background-color:#e0e0e0}
+    td.diff_header {
+    	text-align:center;
+
+    }
+    .diff_next {background-color:#c0c0c0}
+    .diff_add {background-color:#aaffaa}
+    .diff_chg {background-color:#ffff77}
+    .diff_sub {background-color:#ffaaaa}
+    td[nowrap="nowrap"] {
+		word-break:break-all;
+		white-space    : pre;
+        white-space    : pre-wrap;
+        font-family    : monospace;
+	}
+	th {
+		height: 40px;
+		line-height: 40px;
+	}
+	@media (min-width: 768px) {
+	    td[nowrap="nowrap"] {
+	        max-width:310px;
+	        min-width:310px;
+	    }
+	}
+
+	@media (min-width: 992px) {
+	    td[nowrap="nowrap"] {
+	        max-width:420px;
+	        min-width:420px;
+	    }
+	}
+
+	@media (min-width: 1200px) {
+	    td[nowrap="nowrap"] {
+	        max-width:520px;
+	        min-width:520px;
+	    }
+	}
+
+	@media (min-width: 1500px) {
+		.container {
+			width: 1470px;
+		}
+	    td[nowrap="nowrap"] {
+	        max-width:670px;
+	        min-width:670px;
+	    }
+	}
+	@media (min-width: 1900px) {
+		.container {
+			width: 1870px;
+		}
+	    td[nowrap="nowrap"] {
+	        max-width:870px;
+	        min-width:870px;
+	    }
+	}
+</style>
+<div class="container jumbotron">
+	<h1></h1>
+	<p style='color:red'>$errmsg</p>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			$:table
+		</div>
+	</div>
+</div>

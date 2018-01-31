@@ -13,7 +13,31 @@ $var username: $username
 						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['newhtm']
 						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['modifyhtm']
 						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['delhtm']
-						<td><button class='btn btn-danger' onclick='fallback("$ver")'>回退</button>
+						<td><button class='btn btn-danger' onclick='fallback("$infos['vers'][ver]['app']", "$ver")'>回退</button>
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	function fallback(appid, ver) {
+		if(confirm("确定要回退到版本"+ver+"吗?")) {
+			$$.ajax({
+				url: "/",
+				method: "post",
+				data: {
+					action: "fallback",
+					appid: appid,
+					version: ver
+				},
+				success: function(data) {
+					if(data["errcode"]) {
+						alert(data["errmsg"]);
+					} else {
+						alert("回退成功");
+					}
+				}
+			})
+		}
+	}
+
+</script>

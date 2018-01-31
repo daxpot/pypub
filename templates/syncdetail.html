@@ -1,0 +1,32 @@
+$def with (username, infos, errmsg)
+$var title:同步情况
+$var username: $username
+
+<div class="container jumbotron">
+	<h1></h1>
+	<p style='color:red'>$errmsg</p>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<form action="/syncdetail" class="form-horizontal" method="post">
+				<div class="form-group">
+				    <label class="col-sm-1 control-label">appid</label>
+				    <div  class="col-sm-2">
+				    	<input type="text" class="form-control" name="appid" placeholder="可选">
+				    </div>
+				    <label  class="col-sm-2 control-label">服务器host</label>
+				    <div  class="col-sm-2">
+				    	<input type="text" class="form-control" name="host" placeholder="可选">
+				    	<div id="current-cur" style="color:red"></div>
+				    </div>
+				    <div class="col-sm-1">
+				    	<button type="submit" class="btn btn-default btn-success">同 步</button>
+				    </div>
+				</div>
+			</form>
+			<hr>
+			<table class='table table-striped'><tr><td>序号<td>appid<td>服务器host<td>同步版本<td>同步时间
+				$for item in infos:
+					<tr><td>$loop.index<td>$item['appid']<td>$item['host']<td>$item['ver']<td>$item["time"]
+		</div>
+	</div>
+</div>

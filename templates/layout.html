@@ -1,4 +1,6 @@
 $def with (content)
+$var sync: 同步情况
+
 <!doctype html>
 <meta charset=utf-8>
 <title>$content.title</title>
@@ -29,8 +31,14 @@ $def with (content)
 	    </div>
 	  <div class='collapse navbar-collapse' id='navbar-collapse-1'>
      <ul class='nav navbar-nav'>
-     	<li class='active'><a href='/'>首页</a></li>
-     </ul>
+$if content.title != u'同步情况':
+	<li class="active"><a href="/">首页</a></li>
+	<li><a href="/syncdetail">同步情况</a></li>
+$else:
+	<li><a href="/">首页</a></li>
+	<li class="active"><a href="/syncdetail">同步情况</a></li>
+
+</ul>
     <p class='navbar-text navbar-right'>欢迎您，$content.username &nbsp&nbsp&nbsp <a href='/login' class='navbar-link'>退出登录</a></p>
   </div>
   </div>

@@ -5,6 +5,7 @@ import json
 import glob
 import shutil
 import errno
+import datetime
 
 class PubCore(object):
     """docstring for PubCore"""
@@ -111,3 +112,27 @@ class PubCore(object):
         update, meta = self.compute_update(last_md5, current_md5, version)
         COMMON.dbput("meta-%s-%s" % (self.appid, version), meta, "json")
         return update
+
+    def compute_fallback(self, version_md5, current_md5, version):
+        for file in version_md5:
+            if file not in current_md5 or current_md5[file] != version_md5[file]["md5"]:
+                file_path = "./data/objs/%s/%s/%s" % (self.appid, version_md5[file]["ver"], file)
+                self.copy_file(file_path, "%s/%s" % (self.dir, file))
+        for file in current_md5:
+            if file not in version_md5:
+                try:
+                    os.remove("%s/%s" % (self.dir, file))
+                except Exception as e:
+                    logging.error(e)
+        curinfo = COMMON.dbget("cur-%s" % self.appid, {"history": []}, "json")
+        curinfo["current"] = version
+        curinfo["uptime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        COMMON.dbput("cur-%s" % self.appid, curinfo, "json")
+
+    def fallback(self, version):
+        version_md5 = COMMON.dbget("meta-%s-%s" % (self.appid, version), None, "json")
+        if not version_md5:
+            return {"errcode": 1, "errmsg": "版本meta信息不存在"}
+        current_md5 = self.get_current_md5()
+        self.compute_fallback(version_md5, current_md5, version)
+        return {"errcode": 0}

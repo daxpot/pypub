@@ -5,6 +5,9 @@ from pypub.tools import CONFIG_T, WEB_T
 from pypub.index import Index
 from pypub.login import Login
 from pypub.detail import Detail
+from pypub.codediff import Codediff
+from pypub.downfile import Downfile
+from pypub.syncdetail import Syncdetail
 
 def main():
 	global session
@@ -17,7 +20,10 @@ def main():
 	urls = (
 		"/", "Index",
 		"/detail", "Detail",
-		"/login", "Login"
+		"/login", "Login",
+		"/codediff", "Codediff",
+		"/downfile", "Downfile",
+		"/syncdetail", "Syncdetail"
 		)
 	web.config.debug = False
 	app = web.application(urls, globals())
