@@ -10,10 +10,10 @@ import datetime
 class PubCore(object):
     """docstring for PubCore"""
     def __init__(self, app):
-        self.appid = app["name"]
-        self.dir = app["dir"].rstrip("/")
+        self.appid = app["name"].encode("utf-8")
+        self.dir = app["dir"].rstrip("/").encode("utf-8")
         if "remote_dir" in app:
-            self.remote_dir = app["remote_dir"]
+            self.remote_dir = app["remote_dir"].encode("utf-8")
 
     def get_pubignore(self):
         try:
@@ -107,6 +107,7 @@ class PubCore(object):
         return update, meta
 
     def publish(self, version):
+        version = version.encode("utf-8")
         last_md5 = self.get_last_md5()
         current_md5 = self.get_current_md5()
         update, meta = self.compute_update(last_md5, current_md5, version)
@@ -130,6 +131,7 @@ class PubCore(object):
         COMMON.dbput("cur-%s" % self.appid, curinfo, "json")
 
     def fallback(self, version):
+        version = version.encode("utf-8")
         version_md5 = COMMON.dbget("meta-%s-%s" % (self.appid, version), None, "json")
         if not version_md5:
             return {"errcode": 1, "errmsg": "版本meta信息不存在"}
