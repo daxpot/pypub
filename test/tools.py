@@ -2,7 +2,7 @@
 import unittest
 import sys
 sys.path.append(".")
-from pypub.tools import CONFIG_T, COMMON
+from pypub import CONFIG_T, COMMON
 
 class commonTest(unittest.TestCase):
     def test_load_config(self):
@@ -40,7 +40,6 @@ class commonTest(unittest.TestCase):
         print "test_db2"
         db = COMMON.get_db()
         print db.Get("test")
-        print db.GetStats("test234234")
         print list(db.RangeIter(key_from='test', key_to='test'))
 
 

@@ -2,7 +2,7 @@
 import unittest
 import sys
 sys.path.append(".")
-from pypub.pubcore import PubCore
+from pypub import PubCore
 
 class pubcoreTest(unittest.TestCase):
     def test_publish(self):

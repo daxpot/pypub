@@ -1,18 +1,16 @@
 #coding=utf-8
-session = None
 import web
 import sys
 import os
-from pypub.tools import CONFIG_T, WEB_T
-from pypub.index import Index
-from pypub.login import Login
-from pypub.detail import Detail
-from pypub.codediff import Codediff
-from pypub.downfile import Downfile
-from pypub.syncdetail import Syncdetail
+from pypub import CONFIG_T, WEB_T
+from pypub import Index
+from pypub import Login
+from pypub import Detail
+from pypub import Codediff
+from pypub import Downfile
+from pypub import Syncdetail
 
 def main():
-    global session
     config = CONFIG_T.load_config()
     if not config:
         print("配置文件加载失败！")
