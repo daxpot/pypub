@@ -8,7 +8,7 @@ class commonTest(unittest.TestCase):
     def test_load_config(self):
         print "test_load_config"
         config = CONFIG_T.load_config()
-        print config['remote_root']
+        print config['apps']
     def test_load_ssl(self):
         print "test_load_ssl"
     	CONFIG_T.load_ssl()
@@ -30,6 +30,11 @@ class commonTest(unittest.TestCase):
         print "test_get_apps"
     	apps = CONFIG_T.get_apps()
     	print apps
+
+    def test_get_servers(self):
+        print "test_get_servers"
+        servers = CONFIG_T.get_servers()
+        print servers
 
     def test_db(self):
         print "test_db"
