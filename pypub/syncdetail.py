@@ -15,16 +15,15 @@ class Syncdetail(object):
 
     def get_infos(self):
         apps = CONFIG_T.get_apps()
-        servers = CONFIG_T.get_servers()
         infos = []
-        for server in servers:
-            for app in apps:
-                key = "remote-%s-%s" % (app["name"], server["host"])
+        for app in apps:
+            for sid in app["to"]:
+                key = "remote-%s-%s" % (app["name"], sid)
                 info = COMMON.dbget(key, None, "json")
                 if info:
                     infos.append({
                         "appid": app["name"],
-                        "host": server["host"],
+                        "host": sid,
                         "ver": info["ver"],
                         "time": info["time"]
                     })

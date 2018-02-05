@@ -22,23 +22,15 @@ meta-$appid-$ver    json example
 						},
 						...
 					}
-cache-$appid     	json example
-					{
-						"file1": {
-							"md5": "asdfasdf",		//文件file1缓存的md5
-							"time": "123456"		//缓存md5时对应的文件的修改时间
-						},
-						...
-					}
 
-server-$appid-$host json example
+server-$appid-$serverid json example
 					{
 						"file1": {
-							"md5": "asdf",
-							"time":"1232"
+							"md5": "asdf", //文件file1缓存的md5
+							"time":"1232" //缓存md5时对应的文件的修改时间
 						}
 					}
-remote-$appid-$host json example
+remote-$appid-$serverid json example
 					{
 						"ver": "0.0.1",
 						"time": "2018-01-30 12:27:22"

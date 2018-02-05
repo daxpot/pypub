@@ -170,6 +170,7 @@ class RemoteApp(object):
         self.app = app
         self.serverid = serverid
         if serverid != "local":
+            self.dir = app["remote_dir"]
             server = CONFIG_T.get_servers(serverid)
             if not server:
                 msg = "%s 不在config.json中" % serverid
@@ -182,6 +183,7 @@ class RemoteApp(object):
             self.sftp = paramiko.SFTPClient.from_transport(self.ssh.get_transport())
             self.sftp = self.ssh.open_sftp()
         else:
+            self.dir = app["dir"]
             self.ssh = None
             self.sftp = None
 
@@ -193,20 +195,17 @@ class RemoteApp(object):
                 pass
             else: raise
 
-    def down_file(self, src, dist):
-        src = "%s/%s" % (self.app["dir"], src)
+    def get(self, src, dist):
+        src = "%s/%s" % (self.dir, src)
         dist_dir = os.path.dirname(dist)
         self.__mkdirs(dist_dir)
         if self.serverid == "local":
             shutil.copy(src,  dist_dir)
         else:
-            try:
-                self.sftp.get(src, dist)
-            except Exception as e:
-                logging.error(e)
+            self.sftp.get(src, dist)
 
-    def put_file(self, src, dist):
-        dist = "%s/%s" % (self.app["dir"], dist)
+    def put(self, src, dist):
+        dist = "%s/%s" % (self.dir, dist)
         dist_dir = os.path.dirname(dist)
         if self.serverid == "local":
             self.__mkdirs(dist_dir)
@@ -217,8 +216,8 @@ class RemoteApp(object):
             stderr.readlines()
             self.sftp.put(src, dist)
 
-    def remove_file(self, dist):
-        dist = "%s/%s" % (self.app["dir"], dist)
+    def remove(self, dist):
+        dist = "%s/%s" % (self.dir, dist)
         if self.serverid == "local":
             try:
                 os.remove(dist)
@@ -231,7 +230,7 @@ class RemoteApp(object):
                 logging.error(e)
 
     def file_md5(self, path):
-        path = "%s/%s" % (self.app["dir"], path)
+        path = "%s/%s" % (self.dir, path)
         if self.serverid == "local":
             return COMMON.get_file_md5(path)
         else:
@@ -277,9 +276,9 @@ class RemoteApp(object):
 
     def __get_ignores(self):
         path = "data/objs/%s/pubignore" % self.app["name"]
-        self.down_file(".pypub/pubignore", path)
         ignores = []
         try:
+            self.get(".pypub/pubignore", path)
             with open(path, "r") as f:
                 ignores = f.read().split("\n")
         except Exception as e:
@@ -292,17 +291,17 @@ class RemoteApp(object):
         cache_md5 = COMMON.dbget(key, {}, "json")
         if self.serverid == "local":
             abs_files = {}
-            for parent, dirnames, filenames in os.walk(self.app["dir"]):
+            for parent, dirnames, filenames in os.walk(self.dir):
                 for fn in filenames:
                     full = os.path.join(parent, fn)
                     mtime = os.path.getmtime(full)
                     abs_files[full] = mtime
         else:
-            abs_files = self.__get_all_files_in_remote_dir(self.app["dir"])
+            abs_files = self.__get_all_files_in_remote_dir(self.dir)
 
         new_cache_md5 = {}
         for abs_f in abs_files:
-            filename = abs_f.replace(self.app["dir"] + "/", "")
+            filename = abs_f.replace(self.dir + "/", "")
             filename = filename.decode("utf-8")
             if filename.find(".pypub") != 0 and not self.__check_ignore(filename, ignores):
                 if filename in cache_md5 and cache_md5[filename]["time"] == abs_files[abs_f]:
@@ -315,6 +314,10 @@ class RemoteApp(object):
                 }
         COMMON.dbput(key, new_cache_md5, "json")
         return new_cache_md5
+    def close(self):
+        if self.serverid != "local":
+            self.sftp.close()
+            self.ssh.close()
 
         
 
