@@ -13,7 +13,7 @@ class PubCore(object):
         self.appid = app["name"]
         self.dir = app["dir"]
         self.remote_dir = app["remote_dir"]
-        self.ra = RemoteApp(app, app["from"])
+        self.ra = RemoteApp(app, app["from"], app["dir"])
 
     #获取当前线上版本文件的md5
     def get_last_md5(self):
@@ -21,7 +21,7 @@ class PubCore(object):
         version = appver["current"]
         md5 = COMMON.dbget("meta-%s-%s" % (self.appid, version), {}, "json")
         return md5
-        
+
     def __mkdirs(self, path):
         try:
             os.makedirs(path)
@@ -39,14 +39,14 @@ class PubCore(object):
             if file not in last_md5:
                 update["new"].append(file)
                 meta[file] = {
-                    "md5": current_md5[file],
+                    "md5": current_md5[file]["md5"],
                     "ver": version
                 }
                 self.ra.get(file, "%s/%s" % (objs_path, file))
-            elif last_md5[file]["md5"] != current_md5[file]:
+            elif last_md5[file]["md5"] != current_md5[file]["md5"]:
                 update["modify"].append(file)
                 meta[file] = {
-                    "md5": current_md5[file],
+                    "md5": current_md5[file]["md5"],
                     "ver": version
                 }
                 self.ra.get(file, "%s/%s" % (objs_path, file))
@@ -67,7 +67,7 @@ class PubCore(object):
 
     def compute_fallback(self, version_md5, current_md5, version):
         for file in version_md5:
-            if file not in current_md5 or current_md5[file] != version_md5[file]["md5"]:
+            if file not in current_md5 or current_md5[file]["md5"] != version_md5[file]["md5"]:
                 file_path = "./data/objs/%s/%s/%s" % (self.appid, version_md5[file]["ver"], file)
                 self.ra.put(file_path, file)
         for file in current_md5:
@@ -83,6 +83,6 @@ class PubCore(object):
         version_md5 = COMMON.dbget("meta-%s-%s" % (self.appid, version), None, "json")
         if not version_md5:
             return {"errcode": 1, "errmsg": "版本meta信息不存在"}
-        current_md5 = self.get_current_md5()
+        current_md5 = self.ra.get_md5s()
         self.compute_fallback(version_md5, current_md5, version)
         return {"errcode": 0}

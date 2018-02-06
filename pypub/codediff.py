@@ -3,7 +3,7 @@ import difflib
 import web
 import os
 import string
-from tools import WEB_T, CONFIG_T, COMMON
+from tools import WEB_T, CONFIG_T, COMMON, RemoteApp
 
 class Codediff(object):
     """docstring for Codediff"""
@@ -17,7 +17,16 @@ class Codediff(object):
 
     def get_path(self, file, ver, app):
         if ver == "now":
-            return "%s/%s" % (app["dir"], file)
+            ra = RemoteApp(app, app["from"], app["dir"])
+            path = "data/objs/%s/now/%s" % (app["name"], file)
+            try:
+                ra.get(file, path)
+            except Exception as e:
+                try:
+                    os.remove(path)
+                except:
+                    pass
+            return path
         else:
             meta = COMMON.dbget("meta-%s-%s" % (app["name"], ver), {}, "json")
             if file in meta:

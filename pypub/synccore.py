@@ -15,7 +15,7 @@ class SyncCore(object):
         pass
 
     def sync(self, app, serverid):
-        ra_remote = RemoteApp(app, serverid)
+        ra_remote = RemoteApp(app, serverid, app["remote_dir"])
         s_files = ra_remote.get_md5s()
         cur = COMMON.dbget("cur-%s" % app["name"], {"current":""}, "json")
         current = cur["current"]
@@ -24,7 +24,7 @@ class SyncCore(object):
         for file in meta:
             ver = meta[file]["ver"]
             md5 = meta[file]["md5"]
-            if file not in s_files or s_files[file] != md5:
+            if file not in s_files or s_files[file]["md5"] != md5:
                 logging.info("%s %s", u"更新", file)
                 bupdate = True
                 localpath = "data/objs/%s/%s/%s" % (app["name"], ver, file)
@@ -34,24 +34,21 @@ class SyncCore(object):
                 logging.info("%s %s", u"删除", file)
                 bupdate = True
                 ra_remote.remove(file)
-        ra_local = RemoteApp(app, app["from"])
+        ra_local = RemoteApp(app, app["from"], app["dir"])
         hooks_local = "data/objs/%s/hooks.sh" % app["name"]
         try:
             ra_local.get(".pypub/hooks.sh", hooks_local)
             if bupdate and os.path.exists(hooks_local):
                 spath = "/%s_%s.sh" % (app["name"], current)
-                ra_remote.sftp.put(hooks_local, spath)
-                stdin, stdout, stderr = ra_remote.ssh.exec_command("sh %s" % spath)
+                ra_remote.put(hooks_local, spath, False)
+                stdin, stdout, stderr = ra_remote.exec_command("sh %s" % spath)
                 out = stdout.readlines()
                 err = stderr.readlines()
                 for r in err:
                     logging.error(r.strip())
                 for o in out:
                     logging.info(o.strip())
-                try:
-                    ra_remote.sftp.remove(spath)
-                except Exception as e:
-                    logging.error(e)
+                ra_remote.remove(spath, False)
             os.remove(hooks_local)
         except Exception as e:
             logging.error(e)
