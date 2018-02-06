@@ -32,6 +32,7 @@ python 发布项目到多个服务器
 			"remote_dir": "/www/app1/", //项目部署到远程服务器的目录
 			"from": "local",			//默认为local，local代表项目在本地，也可以配置为其他服务器
 			"to": ["server1", "server2"]//项目需要部署到哪些服务器上
+		},
 		{
 			"dir": "/app2",
 			"remote_dir": "/www/app2",
