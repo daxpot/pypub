@@ -40,6 +40,7 @@ class Index(object):
             info["appid"] = appid
             info["version"] = info["current"]
             infos.append(info)
+        infos = sorted(infos, cmp=lambda x,y:cmp(y["uptime"],x["uptime"]))
         return infos
 
     def render(self, errmsg):
