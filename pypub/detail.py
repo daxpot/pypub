@@ -28,7 +28,7 @@ class Detail(object):
         except:
             page = 1
         appver.setdefault("history", [])
-        infos = {"vers": {}, "history": appver["history"]}
+        infos = {"vers": {}, "history": appver["history"], "current": appver["current"]}
         for ver in appver["history"]:
             key = "ver-%s-%s" % (appid, ver)
             infos["vers"][ver] = COMMON.dbget(key, None, "json")
