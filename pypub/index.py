@@ -53,6 +53,11 @@ class Index(object):
         WEB_T.check_login()
         return self.render("")
 
+    def check_version(self, version):
+        if re.match(r"^([0-9]+\.[0-9]+\.[0-9]+)$", version) == None:
+            return False
+        return True
+
     def check_post_param(self):
         i = web.input()
         appid = i.get('appid')
@@ -61,7 +66,7 @@ class Index(object):
         app = CONFIG_T.get_apps(appid)
         if app == None:
             return "", "", "", "", "appid错误"
-        if re.match(r"^([0-9]+\.[0-9]+\.[0-9]+)$", version) == None:
+        if self.check_version(version) == False:
             return "", "", "", "","版本号必须为 '*.*.*' 。*为数字"
         db = COMMON.get_db()
         key = "ver-%s-%s" % (appid, version)
@@ -102,14 +107,16 @@ class Index(object):
         i = web.input()
         appid = i.get("appid")
         version = i.get("version")
+        if self.check_version(version) == False:
+            return '{"errcode": 1, "errmsg": "版本号必须为 \'*.*.*\' 。*为数字"}'
         app = CONFIG_T.get_apps(appid)
         if not app:
-            return {"errcode": 1, "errmsg": "app不存在"}
+            return '{"errcode": 1, "errmsg": "app不存在"}'
         pc = PubCore(app)
         data = pc.fallback(version)
         t = threading.Thread(target=sync_app, args=(appid, ))
         t.start()
-        return data
+        return json.dumps(data)
 
     def POST(self):
         WEB_T.check_login()

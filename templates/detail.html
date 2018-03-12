@@ -29,8 +29,9 @@ $var username: $username
 					appid: appid,
 					version: ver
 				},
+				dataType: "json",
 				success: function(data) {
-					if(data["errcode"]) {
+					if(data["errcode"] != 0) {
 						alert(data["errmsg"]);
 					} else {
 						alert("回退成功");

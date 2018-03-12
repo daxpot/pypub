@@ -11,7 +11,8 @@ ver-$appid-$ver		json example
 						"app": "demo",						//所属app
 						"uptime": "2017-01-03 16:00:00",	//发布时间
 						"comment": "备注",
-						"update": {"new": ["a.txt", "b.txt"], "modify": [], "del": []}		//更新的文件
+						"update": {"new": ["a.txt", "b.txt"], "modify": [], "del": []},		//更新的文件,
+						"owner": "发布人"
 					}
 
 meta-$appid-$ver    json example

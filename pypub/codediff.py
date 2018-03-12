@@ -78,7 +78,7 @@ class Codediff(object):
 
         v1title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v1"), i.get("src"), i.get("v1"))).encode("utf-8")
         v2title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v2"), i.get("src"), i.get("v2"))).encode("utf-8")
-
+        print v1path, v2path
         v1lines = self.read_file(v1path)
         v2lines = self.read_file(v2path)
         table = diff.make_table(v2lines, v1lines, v2title, v1title)
