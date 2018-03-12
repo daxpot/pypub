@@ -39,7 +39,7 @@ class Detail(object):
             infos["vers"]["now"] = {
                 "uptime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "owner": "系统",
-                "comment": "当前版本",
+                "comment": "当前文件",
                 "app": appid,
                 "update": pc.publish("now")
             }

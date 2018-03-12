@@ -4,7 +4,7 @@ from tools import WEB_T, CONFIG_T, COMMON, RemoteApp
 import json
 import errno
 import datetime
-
+import shutil
 
 class PubCore(object):
     """docstring for PubCore"""
@@ -33,6 +33,10 @@ class PubCore(object):
     def compute_update(self, last_md5, current_md5, version):
         update = {"new": [], "modify": [], "del": []}
         objs_path = "./data/objs/%s/%s" % (self.appid, version)
+        try:
+            shutil.rmtree(objs_path)
+        except:
+            pass
         self.__mkdirs(objs_path)
         meta = {}
         for file in current_md5:
