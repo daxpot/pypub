@@ -86,7 +86,7 @@ class ConfigT(object):
         if "servers" in config and isinstance(config["servers"], dict):
             for sid in config["servers"]:
                 server = config["servers"][sid]
-                if "host" in server and isinstance(server["host"], unicode) and server["host"] and "user" in server and isinstance(server["user"], unicode) and server["user"] and "password" in server and isinstance(server["password"], unicode) and server["password"]:
+                if "host" in server and isinstance(server["host"], unicode) and server["host"] and "user" in server and isinstance(server["user"], unicode) and server["user"] and (("password" in server and isinstance(server["password"], unicode) and server["password"]) or ("key_filename" in server and isinstance(server["key_filename"], unicode) and server["key_filename"])):
                     if "port" not in server or not isinstance(server["port"], int):
                         server["port"] = 22
                     server["id"] = sid
@@ -180,7 +180,10 @@ class RemoteApp(object):
             logging.info("link %s", serverid)
             self.ssh = paramiko.SSHClient()
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh.connect(server["host"], server["port"], server["user"], server["password"])
+            if "password" in server and isinstance(server["password"], unicode) and server["password"]:
+                self.ssh.connect(server["host"], server["port"], server["user"], server["password"])
+            else:
+                self.ssh.connect(server["host"], server["port"], server["user"], key_filename=server["key_filename"])
             self.sftp = paramiko.SFTPClient.from_transport(self.ssh.get_transport())
             self.sftp = self.ssh.open_sftp()
         else:
