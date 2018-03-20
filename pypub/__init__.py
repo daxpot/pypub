@@ -5,3 +5,4 @@ from detail import *
 from codediff import *
 from downfile import *
 from syncdetail import *
+from gopub import *

@@ -5,6 +5,7 @@ import json
 import errno
 import datetime
 import shutil
+import time
 
 class PubCore(object):
     """docstring for PubCore"""
@@ -61,10 +62,28 @@ class PubCore(object):
                 update["del"].append(file)
         return update, meta
 
-    def publish(self, version):
+    def publish(self, version, spec_files=None):
         version = version.encode("utf-8")
         last_md5 = self.get_last_md5()
         current_md5 = self.ra.get_md5s()
+        if spec_files != None: 
+        #指定要发布的文件，其他文件就忽略
+            for file in current_md5:
+                if file not in last_md5 and file not in spec_files:    
+                    #新增文件，并且未选中的新增文件，则需要排除掉该文件
+                    del current_md5[file]
+                elif file in last_md5 and last_md5[file]["md5"] != current_md5[file]["md5"] and file not in spec_files:
+                    #修改文件, 并且未选择该文件,则需要修改文件的md5为上次发布的版本的md5,避免发布
+                    current_md5[file]["md5"] = last_md5[file]["md5"]
+
+            for file in last_md5:
+                if file not in current_md5 and file not in spec_files:
+                    #删除的文件，并且未选择该文件
+                    current_md5[file] = {
+                        "md5": last_md5[file]["md5"],
+                        "time": time.time()
+                    }
+
         update, meta = self.compute_update(last_md5, current_md5, version)
         COMMON.dbput("meta-%s-%s" % (self.appid, version), meta, "json")
         return update

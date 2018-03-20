@@ -3,12 +3,7 @@ import web
 import sys
 import os
 from pypub import CONFIG_T, WEB_T
-from pypub import Index
-from pypub import Login
-from pypub import Detail
-from pypub import Codediff
-from pypub import Downfile
-from pypub import Syncdetail
+from pypub import Index, Login, Detail, Codediff, Downfile, Syncdetail, Gopub
 
 def main():
     config = CONFIG_T.load_config()
@@ -23,7 +18,8 @@ def main():
         "/login", "Login",
         "/codediff", "Codediff",
         "/downfile", "Downfile",
-        "/syncdetail", "Syncdetail"
+        "/syncdetail", "Syncdetail",
+        "/gopub", "Gopub"
         )
     web.config.debug = False
     app = web.application(urls, globals())

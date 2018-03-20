@@ -1,0 +1,56 @@
+$def with (username, infos, errmsg)
+$var title:首页
+$var username: $username
+
+<div class="container jumbotron">
+	<h1></h1>
+	<p style='color:red'>$:errmsg</p>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<form action="/gopub?appid=$infos['appid']" class="form-horizontal" method="post">
+				<table class='table table-striped' id='sort-table'>
+					<thead><tr><th data-sort-static='true'>序号<th data-filter='true'>类型<th data-filter='true'>文件<th><label><input type='checkbox' onchange="checkall()">&nbsp&nbsp全选</label>
+					</thead>
+					$ idx = 0
+					$for item in infos['new']:
+						$ idx += 1
+						$ href = "codediff?appid=%s&src=%s&v2=now&v1=%s" % (infos['appid'], item['file'], item['ver'])
+						<tr style='background-color:#b9d6b9'><td>$idx<td>新增文件<td><a href='$href' target='_blank'>$item['file']</a><td><div class='checkbox'><label><input type='checkbox' name='files-$idx' value='$item['file']' class='checkbox'>选择</label></div>
+					$for item in infos['modify']:
+						$ idx += 1
+						$ href = "codediff?appid=%s&src=%s&v2=now&v1=%s" % (infos['appid'], item['file'], item['ver'])
+						<tr><td>$idx<td>修改文件<td><a href='$href' target='_blank'>$item['file']</a><td><div class='checkbox'><label><input type='checkbox' name='files-$idx' value='$item['file']' class='checkbox'>选择</label></div>
+					$for item in infos['del']:
+						$ idx += 1
+						$ href = "codediff?appid=%s&src=%s&v2=now&v1=%s" % (infos['appid'], item['file'], item['ver'])
+						<tr style='background-color:#f5cfcf'><td>$idx<td>删除文件<td><a href='$href' target='_blank'>$item['file']</a><td><div class='checkbox'><label><input type='checkbox' name='files-$idx' value='$item['file']' class='checkbox'>选择</label></div>
+				</table><hr>
+				<div class="form-group">
+					<input type="hidden" name="files-len" value="$idx">
+				    <label for="exampleInputAppid"  class="col-sm-1 control-label">版本号</label>
+				    <div  class="col-sm-2">
+				    	<input type="text" class="form-control" name="version" id="exampleInputappid" placeholder="示例 0.0.1">
+				    </div>
+				    <label for="exampleInputAppid"  class="col-sm-1 control-label">备注</label>
+				    <div  class="col-sm-4">
+				    	<input type="text" class="form-control" maxlength="20" name="comment" id="exampleInputappid" placeholder="限长20">
+				    </div>
+				    <div class="col-sm-1">
+				    	<button type="submit" class="btn btn-default btn-success">发 布</button>
+				    </div>
+				</div>
+			</form>
+			<hr>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	function checkall() {
+		var checked = event.currentTarget.checked;
+		event.preventDefault()
+		var boxes = document.getElementsByClassName("checkbox");
+		for(var i = 0; i<boxes.length; i++) {
+			boxes[i].checked = checked;
+		}
+	}
+</script>

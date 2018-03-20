@@ -15,6 +15,7 @@ import json
 import paramiko
 import fnmatch
 import subprocess
+import re
 
 class ConfigT(object):
     def __init__(self):
@@ -135,6 +136,11 @@ class Common(object):
             if sys.argv[i] == param and (i+1)<arg_len:
                 return sys.argv[i+1]
         return False
+
+    def check_version(self, version):
+        if re.match(r"^([0-9]+\.[0-9]+\.[0-9]+)$", version) == None:
+            return False
+        return True
 
 
     def get_md5(self, s):

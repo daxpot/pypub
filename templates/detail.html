@@ -25,7 +25,7 @@ $var username: $username
 	function fallback(appid, ver) {
 		if(confirm("确定要回退到版本"+ver+"吗?")) {
 			$$.ajax({
-				url: "/",
+				url: "/gopub",
 				method: "post",
 				data: {
 					action: "fallback",
