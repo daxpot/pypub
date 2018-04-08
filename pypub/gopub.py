@@ -44,6 +44,11 @@ class Gopub(object):
             "appid": appid
         }
 
+        curinfo = COMMON.dbget("cur-%s" % appid, None, "json")
+        if curinfo and len(curinfo["history"])>=1:
+            infos["lastver"] = curinfo["history"].pop()
+        else:
+            infos["lastver"] = "0.0.0"
         return infos, ""
 
     def render(self, errmsg):

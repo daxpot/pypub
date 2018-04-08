@@ -32,17 +32,17 @@ class Detail(object):
         for ver in appver["history"]:
             key = "ver-%s-%s" % (appid, ver)
             infos["vers"][ver] = COMMON.dbget(key, None, "json")
-        infos["history"].append("now")
-        if page == 1:
-            app = CONFIG_T.get_apps(appid)
-            pc = PubCore(app)
-            infos["vers"]["now"] = {
-                "uptime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "owner": "系统",
-                "comment": "当前文件",
-                "app": appid,
-                "update": pc.publish("now")
-            }
+        # infos["history"].append("now")
+        # if page == 1:
+        #     app = CONFIG_T.get_apps(appid)
+        #     pc = PubCore(app)
+        #     infos["vers"]["now"] = {
+        #         "uptime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        #         "owner": "系统",
+        #         "comment": "当前文件",
+        #         "app": appid,
+        #         "update": pc.publish("now")
+        #     }
 
         infos["history"].reverse()
         start = (page-1)*20

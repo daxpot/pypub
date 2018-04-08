@@ -14,7 +14,13 @@ class Syncdetail(object):
         pass
 
     def get_infos(self):
-        apps = CONFIG_T.get_apps()
+        i = web.input()
+        appid = i.get("appid")
+        if appid:
+            app = CONFIG_T.get_apps(appid)
+            apps = [app]
+        else:
+            apps = CONFIG_T.get_apps()
         infos = []
         for app in apps:
             for sid in app["to"]:

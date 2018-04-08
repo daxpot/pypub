@@ -28,9 +28,9 @@ $var username: $username
 				</div>
 			</form>
 			<hr> -->
-			<table class='table table-striped'><tr><td>序号<td>appid<td>当前版本号<td>上线时间<td>版本备注<td>操作
+			<table class='table table-striped'><tr><td>序号<td>appid<td>当前版本号<td>上线时间<td>版本备注<td>操作<td>版本详情<td>同步详情
 				$for item in infos:
-					<tr><td>$loop.index<td>$item['appid']<td id='version-$item['appid']'>$item['version']<td>$item['uptime']<td>$item['comment']<td><a href='/detail?appid=$item['appid']'><button class='btn btn-default'>详情</button></a>&nbsp&nbsp<a href='/gopub?appid=$item['appid']'><button class='btn btn-success'>去发布</button></a>
+					<tr><td>$loop.index<td>$item['appid']<td id='version-$item['appid']'>$item['version']<td>$item['uptime']<td>$item['comment']<td><a href='/gopub?appid=$item['appid']'><button class='btn btn-success'>去发布</button></a><td><a href='/detail?appid=$item['appid']'>版本详情</a><td><a href='/syncdetail?appid=$item['appid']'>同步详情</a>
 			</table>
 		</div>
 	</div>
