@@ -24,10 +24,7 @@ class Index(object):
             appid = app["name"]
             info = self.db_read_json("cur-%s" % appid, {"current": ""})
             ver_info = self.db_read_json("ver-%s-%s" % (appid, info["current"]), {"uptime": "", "comment": ""})
-            if "uptime" in info:
-                info["uptime"] = info["uptime"]
-            else:
-                info["uptime"] = ver_info["uptime"]
+            info["uptime"] = ver_info["uptime"]
             info["comment"] = ver_info["comment"]
             info["appid"] = appid
             info["version"] = info["current"]

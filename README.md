@@ -58,4 +58,5 @@ python 发布项目到多个服务器
 }
 ```
 配置好之后执行python main.py
+正式环境python main.py 8080 2>nohup.out &
 输入127.0.0.1:8080进入版本发布管理后台
