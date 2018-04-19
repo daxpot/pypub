@@ -7,7 +7,6 @@ import errno
 import stat
 import logging
 import time
-from web.wsgiserver import CherryPyWSGIServer
 import web
 import hashlib
 import leveldb
@@ -33,7 +32,7 @@ class ConfigT(object):
             logging.exception(e)
         return False
 
-    def load_ssl(self):
+    def load_ssl(self, CherryPyWSGIServer):
         config = self.load_config()
         if config and "certs" in config and "key" in config["certs"] and "pem" in config["certs"]:
             CherryPyWSGIServer.ssl_certificate = config["certs"]["pem"]

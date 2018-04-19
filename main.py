@@ -4,6 +4,7 @@ import sys
 import os
 from pypub import CONFIG_T, WEB_T
 from pypub import Index, Login, Detail, Codediff, Downfile, Syncdetail, Gopub
+from web.wsgiserver import CherryPyWSGIServer
 
 def main():
     config = CONFIG_T.load_config()
@@ -11,7 +12,7 @@ def main():
         print("配置文件加载失败！")
         return
     CONFIG_T.init_logger()
-    CONFIG_T.load_ssl()
+    CONFIG_T.load_ssl(CherryPyWSGIServer)
     urls = (
         "/", "Index",
         "/detail", "Detail",
