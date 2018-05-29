@@ -17,6 +17,29 @@ $var username: $username
 						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['modifyhtm']
 						<td style='max-width:200px;word-wrap:break-word;'>$:infos['vers'][ver]['delhtm']
 						<td><button class='btn btn-danger' onclick='fallback("$infos['vers'][ver]['app']", "$ver")'>回退</button>
+			</table>
+			<nav>
+		        <ul class="pagination navbar-left">
+		            <li>
+		                <a href="detail?appid=$infos['appid']&page=$(infos['page']-1)" aria-label="Previous">
+		                <span aria-hidden="true">«</span>
+		                </a>
+		            </li>
+		            <li class="active"><a href="detail?appid=$infos['appid']&page=$infos['page']">$infos['page']</a></li>
+		            <li>
+	            	<a href="detail?appid=$infos['appid']&page=$(infos['page']+1)" aria-label="Next">
+			            <span aria-hidden="true">»</span>
+			        </a>
+		        </li>
+		      </ul>
+		      <form class="navbar-form navbar-left pagination" action="detail" method="get" role="search">
+		        <div class="form-group">
+		          <input type="hidden" name="appid" value="$infos['appid']">
+		          <input type="text" class="form-control number" placeholder="页码" min="1" name="page">
+		        </div>
+		        <button type="submit" class="btn btn-default">Go</button>
+		      </form>
+		    </nav>
 		</div>
 	</div>
 </div>
