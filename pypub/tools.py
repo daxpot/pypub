@@ -294,8 +294,8 @@ class RemoteApp(object):
                 return True
         return False
 
-    def __get_ignores(self):
-        path = "data/objs/%s/pubignore" % self.app["name"]
+    def get_ignores(self):
+        path = "data/objs/%s/%s/pubignore" % (self.app["name"], self.serverid)
         ignores = []
         try:
             self.get(".pypub/pubignore", path)
@@ -306,8 +306,9 @@ class RemoteApp(object):
             logging.error(e)
         return ignores
 
-    def get_md5s(self):
-        ignores = self.__get_ignores()
+    def get_md5s(self, ignores=None):
+        if ignores == None:
+            ignores = self.get_ignores()
         key = "server-%s-%s" % (self.app["name"], self.serverid)
         cache_md5 = COMMON.dbget(key, {}, "json")
         if self.serverid == "local":

@@ -15,8 +15,10 @@ class SyncCore(object):
         pass
 
     def sync(self, app, serverid):
+        ra_local = RemoteApp(app, app["from"], app["dir"])
+        ignores = ra_local.get_ignores()
         ra_remote = RemoteApp(app, serverid, app["remote_dir"])
-        s_files = ra_remote.get_md5s()
+        s_files = ra_remote.get_md5s(ignores)
         cur = COMMON.dbget("cur-%s" % app["name"], {"current":""}, "json")
         current = cur["current"]
         meta = COMMON.dbget("meta-%s-%s" % (app["name"], current), {}, "json")
@@ -34,7 +36,6 @@ class SyncCore(object):
                 logging.info("%s %s", u"删除", file)
                 bupdate = True
                 ra_remote.remove(file)
-        ra_local = RemoteApp(app, app["from"], app["dir"])
         hooks_local = "data/objs/%s/hooks.sh" % app["name"]
         try:
             ra_local.get(".pypub/hooks.sh", hooks_local)
