@@ -15,6 +15,7 @@ import paramiko
 import fnmatch
 import subprocess
 import re
+import random
 
 class ConfigT(object):
     def __init__(self):
@@ -295,7 +296,7 @@ class RemoteApp(object):
         return False
 
     def get_ignores(self):
-        path = "data/objs/%s/%s/pubignore" % (self.app["name"], self.serverid)
+        path = "data/objs/%s/%s/pubignore%s" % (self.app["name"], self.serverid, random.random())
         ignores = []
         try:
             self.get(".pypub/pubignore", path)
