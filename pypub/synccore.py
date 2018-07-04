@@ -43,12 +43,20 @@ class SyncCore(object):
                 spath = "/%s_%s.sh" % (app["name"], current)
                 ra_remote.put(hooks_local, spath, False)
                 stdin, stdout, stderr = ra_remote.exec_command("sh %s" % spath)
-                out = stdout.readlines()
-                err = stderr.readlines()
-                for r in err:
-                    logging.error(r.strip())
-                for o in out:
-                    logging.info(o.strip())
+                while True:
+                    try:
+                        r = stderr.next()
+                        if r.strip():
+                            logging.error(r)
+                    except:
+                        break
+                while True:
+                    try:
+                        r = stdout.next()
+                        if r.strip():
+                            logging.info(r)
+                    except:
+                        break
                 ra_remote.remove(spath, False)
             os.remove(hooks_local)
         except Exception as e:
