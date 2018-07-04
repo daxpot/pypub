@@ -7,6 +7,7 @@ import errno
 import stat
 import logging
 import time
+from web.wsgiserver import CherryPyWSGIServer
 import web
 import hashlib
 import leveldb
@@ -33,7 +34,7 @@ class ConfigT(object):
             logging.exception(e)
         return False
 
-    def load_ssl(self, CherryPyWSGIServer):
+    def load_ssl(self):
         config = self.load_config()
         if config and "certs" in config and "key" in config["certs"] and "pem" in config["certs"]:
             CherryPyWSGIServer.ssl_certificate = config["certs"]["pem"]
@@ -262,7 +263,7 @@ class RemoteApp(object):
                 return md5
         return ""
 
-    def __get_all_files_in_remote_dir(self, remote_dir):
+    def __get_all_files_in_remote_dir(self, remote_dir, root_dir, ignores=[]):
         # 保存所有文件的列表
         all_files = {}
 
@@ -281,9 +282,10 @@ class RemoteApp(object):
             # 如果是目录，则递归处理该目录，这里用到了stat库中的S_ISDIR方法，与linux中的宏的名字完全一致
             if stat.S_ISDIR(x.st_mode):
                 # all_files.extend(self.__get_all_files_in_remote_dir(filename))
-                files = self.__get_all_files_in_remote_dir(filename)
-                for f in files:
-                    all_files[f] = files[f]
+                if not self.__check_ignore(filename.lstrip(root_dir+"/"), ignores):
+                    files = self.__get_all_files_in_remote_dir(filename, root_dir, ignores)
+                    for f in files:
+                        all_files[f] = files[f]
             else:
                 all_files[filename] = x.st_mtime
         return all_files
@@ -304,7 +306,7 @@ class RemoteApp(object):
                 ignores = f.read().split("\n")
             os.remove(path)
         except Exception as e:
-            logging.error(e)
+            logging.info(e)
         return ignores
 
     def get_md5s(self, ignores=None):
@@ -320,7 +322,7 @@ class RemoteApp(object):
                     mtime = os.path.getmtime(full)
                     abs_files[full] = mtime
         else:
-            abs_files = self.__get_all_files_in_remote_dir(self.dir)
+            abs_files = self.__get_all_files_in_remote_dir(self.dir, self.dir, ignores)
 
         new_cache_md5 = {}
         for abs_f in abs_files:
