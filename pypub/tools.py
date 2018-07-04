@@ -212,7 +212,7 @@ class RemoteApp(object):
         dist_dir = os.path.dirname(dist)
         self.__mkdirs(dist_dir)
         if self.serverid == "local":
-            shutil.copy(src,  dist_dir)
+            shutil.copy(src,  dist)
         else:
             self.sftp.get(src, dist)
 
