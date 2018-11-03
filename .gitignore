@@ -6,3 +6,4 @@ data/leveldb
 data/log
 data/objs
 data/sessions
+sftp-config.json
