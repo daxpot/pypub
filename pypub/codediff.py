@@ -52,7 +52,10 @@ class Codediff(object):
             return ["二进制文件，无法对比"]
         try:
             with open(path, "r") as f:
-                return f.readlines()
+                rets = []
+                for line in f:
+                    rets.append(line.decode('utf-8'))
+                return rets
         except Exception as e:
             pass
         return []
@@ -76,8 +79,8 @@ class Codediff(object):
             return self.render(errmsg, "")
         diff = difflib.HtmlDiff()
 
-        v1title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v1"), i.get("src"), i.get("v1"))).encode("utf-8")
-        v2title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v2"), i.get("src"), i.get("v2"))).encode("utf-8")
+        v1title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v1"), i.get("src"), i.get("v1")))
+        v2title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v2"), i.get("src"), i.get("v2")))
         
         v1lines = self.read_file(v1path)
         v2lines = self.read_file(v2path)
