@@ -91,13 +91,14 @@ class PubCore(object):
         return update
 
     def compute_fallback(self, version_md5, current_md5, version):
-        for file in version_md5:
-            if file not in current_md5 or current_md5[file]["md5"] != version_md5[file]["md5"]:
-                file_path = "./data/objs/%s/%s/%s" % (self.appid, version_md5[file]["ver"], file)
-                self.ra.put(file_path, file)
-        for file in current_md5:
-            if file not in version_md5:
-                self.ra.remove(file)
+        # 不处理当前文件
+        # for file in version_md5:
+        #     if file not in current_md5 or current_md5[file]["md5"] != version_md5[file]["md5"]:
+        #         file_path = "./data/objs/%s/%s/%s" % (self.appid, version_md5[file]["ver"], file)
+        #         self.ra.put(file_path, file)
+        # for file in current_md5:
+        #     if file not in version_md5:
+        #         self.ra.remove(file)
         curinfo = COMMON.dbget("cur-%s" % self.appid, {"history": []}, "json")
         curinfo["current"] = version
         curinfo["uptime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
