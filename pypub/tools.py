@@ -7,7 +7,6 @@ import errno
 import stat
 import logging
 import time
-from web.wsgiserver import CherryPyWSGIServer
 import web
 import hashlib
 import leveldb
@@ -30,15 +29,9 @@ class ConfigT(object):
         try:
             with open(config_path, "r") as f:
                 return commentjson.loads(f.read())
-        except Exception, e:
+        except Exception as e:
             logging.exception(e)
         return False
-
-    def load_ssl(self):
-        config = self.load_config()
-        if config and "certs" in config and "key" in config["certs"] and "pem" in config["certs"]:
-            CherryPyWSGIServer.ssl_certificate = config["certs"]["pem"]
-            CherryPyWSGIServer.ssl_private_key = config["certs"]["key"]
 
     def init_logger(self, logLevel=logging.INFO):
         log_root = 'data/log'
@@ -69,9 +62,9 @@ class ConfigT(object):
                     app.setdefault("name", os.path.basename(app["dir"]))
                     app.setdefault("from", "local")
                     app.setdefault("to", [])
-                    app["name"] = app["name"].encode("utf-8")
-                    app["remote_dir"] = app["remote_dir"].rstrip("/").encode("utf-8")
-                    app["dir"] = app["dir"].rstrip("/").encode("utf-8")
+                    app["name"] = app["name"]
+                    app["remote_dir"] = app["remote_dir"].rstrip("/")
+                    app["dir"] = app["dir"].rstrip("/")
                 else:
                     apps.remove(app)
         if appid:
@@ -88,13 +81,13 @@ class ConfigT(object):
         if "servers" in config and isinstance(config["servers"], dict):
             for sid in config["servers"]:
                 server = config["servers"][sid]
-                if "host" in server and isinstance(server["host"], unicode) and server["host"] and "user" in server and isinstance(server["user"], unicode) and server["user"] and (("password" in server and isinstance(server["password"], unicode) and server["password"]) or ("key_filename" in server and isinstance(server["key_filename"], unicode) and server["key_filename"])):
+                if "host" in server and isinstance(server["host"], str) and server["host"] and "user" in server and isinstance(server["user"], str) and server["user"] and (("password" in server and isinstance(server["password"], str) and server["password"]) or ("key_filename" in server and isinstance(server["key_filename"], str) and server["key_filename"])):
                     if "port" not in server or not isinstance(server["port"], int):
                         server["port"] = 22
                     server["id"] = sid
                     servers[sid] = server
         if serverid:
-            if serverid.decode("utf-8") in servers:
+            if serverid in servers:
                 return servers[serverid]
         return servers
 
@@ -128,7 +121,7 @@ class WebT(object):
 class Common(object):
     """docstring for Common"""
     def __init__(self):
-        print "Common init"
+        print("Common init")
         self.leveldb = None
 
     def get_command_arg(self, param):
@@ -145,11 +138,18 @@ class Common(object):
 
 
     def get_md5(self, s):
-        return hashlib.md5(s).hexdigest()
+        if isinstance(s, str):
+            s = s.encode("utf-8")
+        hl = hashlib.md5(s)
+        return hl.hexdigest()
 
     def get_file_md5(self, file):
-        with open(file, "r") as f:
-            return self.get_md5(f.read())
+        try:
+            with open(file, "r") as f:
+                return self.get_md5(f.read())
+        except UnicodeDecodeError:
+            with open(file, "rb") as f:
+                return self.get_md5(f.read())
 
     def get_db(self):
         if not self.leveldb:
@@ -159,16 +159,21 @@ class Common(object):
     def dbget(self, key, default=None, format="string"):
         db = self.get_db()
         try:
-            data = db.Get(key)
+            if isinstance(key, str):
+                key = key.encode("utf-8")
+            data = db.Get(key).decode("utf-8")
             if format == "json":
                 data = json.loads(data)
             return data
-        except KeyError:
+        except KeyError as e:
             return default
     def dbput(self, key, value, format='string'):
         db = self.get_db()
+        if isinstance(key, str):
+            key = key.encode("utf-8")
         if format == "json":
             value = json.dumps(value)
+        value = value.encode("utf-8")
         db.Put(key, value)
 
 
@@ -187,7 +192,7 @@ class RemoteApp(object):
             logging.info("link %s", serverid)
             self.ssh = paramiko.SSHClient()
             self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            if "password" in server and isinstance(server["password"], unicode) and server["password"]:
+            if "password" in server and isinstance(server["password"], str) and server["password"]:
                 self.ssh.connect(server["host"], server["port"], server["user"], server["password"])
             else:
                 self.ssh.connect(server["host"], server["port"], server["user"], key_filename=server["key_filename"])
@@ -327,8 +332,6 @@ class RemoteApp(object):
         new_cache_md5 = {}
         for abs_f in abs_files:
             filename = abs_f.replace(self.dir + "/", "")
-            if isinstance(filename, str):
-                filename = filename.decode("utf-8")
             if filename.find(".pypub") != 0 and not self.__check_ignore(filename, ignores):
                 if filename in cache_md5 and cache_md5[filename]["time"] == abs_files[abs_f]:
                     md5 = cache_md5[filename]["md5"]

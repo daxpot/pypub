@@ -2,6 +2,8 @@
 import web
 import sys
 import os
+from cheroot.server import HTTPServer
+from cheroot.ssl.builtin import BuiltinSSLAdapter
 from pypub import CONFIG_T, WEB_T
 from pypub import Index, Login, Detail, Codediff, Downfile, Syncdetail, Gopub
 
@@ -11,7 +13,10 @@ def main():
         print("配置文件加载失败！")
         return
     CONFIG_T.init_logger()
-    CONFIG_T.load_ssl()
+    if config and "certs" in config and "key" in config["certs"] and "pem" in config["certs"]:
+        HTTPServer.ssl_adapter = BuiltinSSLAdapter(
+                        certificate=config["certs"]["pem"],
+                        private_key=config["certs"]["key"])
     urls = (
         "/", "Index",
         "/detail", "Detail",

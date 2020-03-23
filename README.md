@@ -1,5 +1,5 @@
 # pypub
-python 发布项目到多个服务器
+python3 发布项目到多个服务器
 特点:
 1. 将文件夹视为项目名称，管理项目代码即管理该文件夹代码
 2. 支持部署项目到多个服务器
@@ -57,6 +57,6 @@ python 发布项目到多个服务器
 	}
 }
 ```
-配置好之后执行python main.py
-正式环境python main.py 8080 2>nohup.out &
+配置好之后执行python3 main.py
+正式环境python3 main.py 8080 2>nohup.out &
 输入127.0.0.1:8080进入版本发布管理后台

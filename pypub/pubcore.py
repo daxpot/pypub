@@ -1,6 +1,6 @@
 #coding=utf-8
 import os
-from tools import WEB_T, CONFIG_T, COMMON, RemoteApp
+from .tools import WEB_T, CONFIG_T, COMMON, RemoteApp
 import json
 import errno
 import datetime
@@ -63,12 +63,13 @@ class PubCore(object):
         return update, meta
 
     def publish(self, version, spec_files=None):
-        version = version.encode("utf-8")
+        version = version
         last_md5 = self.get_last_md5()
         current_md5 = self.ra.get_md5s()
         if spec_files != None: 
         #指定要发布的文件，其他文件就忽略
-            for file in current_md5.keys():
+            keys = list(current_md5.keys())
+            for file in keys:
                 if file not in last_md5 and file not in spec_files:    
                     #新增文件，并且未选中的新增文件，则需要排除掉该文件
                     del current_md5[file]
@@ -103,7 +104,7 @@ class PubCore(object):
         COMMON.dbput("cur-%s" % self.appid, curinfo, "json")
 
     def fallback(self, version):
-        version = version.encode("utf-8")
+        version = version
         version_md5 = COMMON.dbget("meta-%s-%s" % (self.appid, version), None, "json")
         if not version_md5:
             return {"errcode": 1, "errmsg": "版本meta信息不存在"}

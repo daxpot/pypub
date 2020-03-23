@@ -1,4 +1,4 @@
-commentjson==0.6
+commentjson
 web.py
 paramiko
 leveldb

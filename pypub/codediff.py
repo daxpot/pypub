@@ -2,7 +2,7 @@
 import difflib
 import web
 import os
-from tools import WEB_T, CONFIG_T, COMMON, RemoteApp
+from .tools import WEB_T, CONFIG_T, COMMON, RemoteApp
 
 class Codediff(object):
     """docstring for Codediff"""
@@ -54,7 +54,7 @@ class Codediff(object):
             with open(path, "r") as f:
                 rets = []
                 for line in f:
-                    rets.append(line.decode('utf-8'))
+                    rets.append(line)
                 return rets
         except Exception as e:
             pass
@@ -63,9 +63,8 @@ class Codediff(object):
     def istextfile(self, path):
         if not os.path.exists(path):
             return 1
-        s = open(path).read()
         try:
-            s.decode("utf-8")
+            s = open(path).read()
             return 1
         except:
             return 0
@@ -79,8 +78,8 @@ class Codediff(object):
             return self.render(errmsg, "")
         diff = difflib.HtmlDiff()
 
-        v1title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v1"), i.get("src"), i.get("v1")))
-        v2title = (u"<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v2"), i.get("src"), i.get("v2")))
+        v1title = ("<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v1"), i.get("src"), i.get("v1")))
+        v2title = ("<a href='downfile?appid=%s&ver=%s&src=%s'>下载%s</a>" % (i.get("appid"), i.get("v2"), i.get("src"), i.get("v2")))
         
         v1lines = self.read_file(v1path)
         v2lines = self.read_file(v2path)

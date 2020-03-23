@@ -1,8 +1,11 @@
 #coding=utf-8
 import web
 import json
-from tools import WEB_T, CONFIG_T, COMMON
+from .tools import WEB_T, CONFIG_T, COMMON
 import datetime
+from functools import cmp_to_key
+def cmp(a, b):
+    return (a > b) - (a < b) 
 
 class Index(object):
     """docstring for Index"""
@@ -29,7 +32,7 @@ class Index(object):
             info["appid"] = appid
             info["version"] = info["current"]
             infos.append(info)
-        infos = sorted(infos, cmp=lambda x,y:cmp(y["uptime"],x["uptime"]))
+        infos = sorted(infos, key=cmp_to_key(lambda x,y:cmp(y["uptime"],x["uptime"])))
         return infos
 
     def render(self, errmsg):

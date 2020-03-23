@@ -7,7 +7,7 @@ import datetime
 import logging
 #同步项目代码到各个服务器中
 
-from tools import WEB_T, CONFIG_T, COMMON, RemoteApp
+from .tools import WEB_T, CONFIG_T, COMMON, RemoteApp
 
 class SyncCore(object):
     """docstring for SyncCore"""

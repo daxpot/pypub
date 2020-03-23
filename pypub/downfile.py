@@ -1,7 +1,7 @@
 #coding=utf-8
 import web
 import os
-from tools import WEB_T, CONFIG_T, COMMON, RemoteApp
+from .tools import WEB_T, CONFIG_T, COMMON, RemoteApp
 
 class Downfile(object):
     """docstring for Downfile"""

@@ -1,7 +1,7 @@
 #coding=utf-8
 import web
-from tools import WEB_T, CONFIG_T, COMMON
-from synccore import SyncCore
+from .tools import WEB_T, CONFIG_T, COMMON
+from .synccore import SyncCore
 import threading
 
 def sync_app(appid=None, host=None):

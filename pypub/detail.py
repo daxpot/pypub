@@ -1,8 +1,8 @@
 #coding=utf-8
 import web
 import json
-from tools import WEB_T, CONFIG_T, COMMON
-from pubcore import PubCore
+from .tools import WEB_T, CONFIG_T, COMMON
+from .pubcore import PubCore
 import datetime
 
 class Detail(object):

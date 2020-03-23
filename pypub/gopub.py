@@ -1,10 +1,10 @@
 #coding=utf-8
 import web
 import json
-from tools import WEB_T, CONFIG_T, COMMON
-from pubcore import PubCore
+from .tools import WEB_T, CONFIG_T, COMMON
+from .pubcore import PubCore
 import datetime
-from synccore import SyncCore
+from .synccore import SyncCore
 import threading
 
 def sync_app(appid):
@@ -107,12 +107,12 @@ class Gopub(object):
         }
         db = COMMON.get_db()
         key = "ver-%s-%s" % (appid, version)
-        db.Put(key, json.dumps(verinfo))
+        COMMON.dbput(key, json.dumps(verinfo))
         appver = COMMON.dbget("cur-%s" % appid, {}, "json")
         appver.setdefault("history", [])
         appver["current"] = version
         appver["history"].append(version)
-        db.Put("cur-%s" % appid, json.dumps(appver))
+        COMMON.dbput("cur-%s" % appid, json.dumps(appver))
         t = threading.Thread(target=sync_app, args=(appid, ))
         t.start()
         return "发布成功,文件更新详情：%s" % json.dumps(update)

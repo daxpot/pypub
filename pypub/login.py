@@ -1,6 +1,6 @@
 #coding=utf-8
 import web
-from tools import COMMON, WEB_T, CONFIG_T
+from .tools import COMMON, WEB_T, CONFIG_T
 
 class Login(object):
     """docstring for Login"""
