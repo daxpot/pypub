@@ -144,12 +144,8 @@ class Common(object):
         return hl.hexdigest()
 
     def get_file_md5(self, file):
-        try:
-            with open(file, "r") as f:
-                return self.get_md5(f.read())
-        except UnicodeDecodeError:
-            with open(file, "rb") as f:
-                return self.get_md5(f.read())
+        with open(file, "rb") as f:
+            return self.get_md5(f.read())
 
     def get_db(self):
         if not self.leveldb:
